@@ -1,0 +1,57 @@
+import os
+import shutil
+
+# Define the directory to organize
+directory_to_organize = "path_to_your_directory"  # Modify this path
+
+# Create a dictionary mapping file extensions to folder names
+file_type_folders = {
+    'Images': ['.jpg', '.jpeg', '.png', '.gif', '.bmp'],
+    'Documents': ['.pdf', '.docx', '.txt', '.pptx', '.xlsx', '.csv'],
+    'Audio': ['.mp3', '.wav', '.flac'],
+    'Videos': ['.mp4', '.mkv', '.avi'],
+    'Archives': ['.zip', '.rar', '.tar', '.gz'],
+    'Scripts': ['.py', '.js', '.html'],
+}
+
+# Function to organize files
+def organize_files(directory):
+    # Check if the directory exists
+    if not os.path.exists(directory):
+        print(f"Directory '{directory}' does not exist.")
+        return
+
+    # Loop through all files in the directory
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+
+        # Skip directories, only process files
+        if os.path.isdir(file_path):
+            continue
+
+        # Get the file extension
+        file_extension = os.path.splitext(filename)[1].lower()
+
+        # Determine the folder based on file extension
+        folder_found = False
+        for folder_name, extensions in file_type_folders.items():
+            if file_extension in extensions:
+                folder_path = os.path.join(directory, folder_name)
+
+                # If the folder doesn't exist, create it
+                if not os.path.exists(folder_path):
+                    os.makedirs(folder_path)
+
+                # Move the file into the appropriate folder
+                new_file_path = os.path.join(folder_path, filename)
+                shutil.move(file_path, new_file_path)
+                print(f"Moved '{filename}' to '{folder_name}' folder.")
+                folder_found = True
+                break
+        
+        # If no folder was found for the file extension
+        if not folder_found:
+            print(f"Unsorted file type '{filename}' not categorized.")
+
+# Run the file organization function
+organize_files(directory_to_organize)
